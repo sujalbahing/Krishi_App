@@ -1,5 +1,5 @@
 import { useSignUp } from "@clerk/expo";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -14,6 +14,7 @@ import {
 export default function VerifyEmail() {
   const { signUp, errors, fetchStatus } = useSignUp();
   const router = useRouter();
+  const { email } = useLocalSearchParams<{ email: string }>();
   const [code, setCode] = useState("");
 
   const isLoading = fetchStatus === "fetching";
@@ -48,12 +49,12 @@ export default function VerifyEmail() {
       className="bg-white"
       keyboardShouldPersistTaps="handled"
     >
-      <View className="flex-1 justify-center px-6 pt-12 pb-8">
+      <View className="flex-1 px-6 pt-20 pb-8">
         {/* Logo */}
         <View className="items-center mb-8">
           <Image
             source={require("../../assets/images/krishi.png")}
-            className="w-44 h-28"
+            className="w-56 h-36"
             resizeMode="contain"
           />
         </View>
@@ -64,7 +65,8 @@ export default function VerifyEmail() {
         </Text>
 
         <Text className="text-base text-gray-400 text-center mb-8">
-          Enter the verification code sent to your email.
+          We have sent a code to{" "}
+          <Text className="font-bold text-gray-700">{email}</Text>
         </Text>
 
         {/* OTP */}
@@ -102,14 +104,15 @@ export default function VerifyEmail() {
         </TouchableOpacity>
 
         {/* Resend */}
-        <View className="items-center mt-7">
-          <Text className="text-gray-400">Didn’t receive the code?</Text>
+        <View className="flex-row justify-center items-center mt-7">
+          <Text className="text-gray-400">Didn’t you receive any code?</Text>
 
           <TouchableOpacity
             onPress={() => signUp.verifications.sendEmailCode()}
-            className="mt-2"
           >
-            <Text className="text-[#7FA339] font-semibold">Resend Code</Text>
+            <Text className="text-[#7FA339] font-semibold ml-1">
+              Resend Code
+            </Text>
           </TouchableOpacity>
         </View>
 
