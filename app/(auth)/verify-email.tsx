@@ -75,8 +75,13 @@ export default function VerifyEmail() {
         </Text>
 
         <TextInput
-          className="w-full h-16 border border-gray-200 rounded-full px-7 text-base"
+          className="w-full border border-gray-200 rounded-full px-7 text-base"
           placeholder="Enter verification code"
+          style={{
+            height: 64,
+            paddingVertical: 0,
+            lineHeight: 16,
+          }}
           placeholderTextColor="#B0B0B0"
           keyboardType="number-pad"
           value={code}
