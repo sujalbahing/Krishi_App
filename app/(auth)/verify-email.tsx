@@ -1,0 +1,131 @@
+import { useSignUp } from "@clerk/expo";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+export default function VerifyEmail() {
+  const { signUp, errors, fetchStatus } = useSignUp();
+  const router = useRouter();
+  const [code, setCode] = useState("");
+
+  const isLoading = fetchStatus === "fetching";
+  const onVerifyPress = async () => {
+    const { error } = await signUp.verifications.verifyEmailCode({
+      code,
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    if (signUp.status === "complete") {
+      await signUp.finalize({
+        navigate: ({ session, decorateUrl }) => {
+          if (session?.currentTask) {
+            console.log(session.currentTask);
+            return;
+          }
+
+          const url = decorateUrl("/");
+          router.replace(url as any);
+        },
+      });
+    }
+  };
+
+  return (
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      className="bg-white"
+      keyboardShouldPersistTaps="handled"
+    >
+      <View className="flex-1 justify-center px-6 pt-12 pb-8">
+        {/* Logo */}
+        <View className="items-center mb-8">
+          <Image
+            source={require("../../assets/images/krishi.png")}
+            className="w-44 h-28"
+            resizeMode="contain"
+          />
+        </View>
+
+        {/* Title */}
+        <Text className="text-3xl font-bold text-gray-900 text-center mb-2">
+          Verify Your Email
+        </Text>
+
+        <Text className="text-base text-gray-400 text-center mb-8">
+          Enter the verification code sent to your email.
+        </Text>
+
+        {/* OTP */}
+        <Text className="text-xl font-bold text-gray-900 mb-2">
+          Verification Code
+        </Text>
+
+        <TextInput
+          className="w-full h-16 border border-gray-200 rounded-full px-7 text-base"
+          placeholder="Enter verification code"
+          placeholderTextColor="#B0B0B0"
+          keyboardType="number-pad"
+          value={code}
+          onChangeText={setCode}
+          maxLength={6}
+        />
+
+        {errors.fields.code && (
+          <Text className="text-red-500 text-sm mt-2">
+            {errors.fields.code.message}
+          </Text>
+        )}
+
+        {/* Verify */}
+        <TouchableOpacity
+          onPress={onVerifyPress}
+          disabled={isLoading}
+          className="w-full h-16 bg-[#7FA339] rounded-full items-center justify-center mt-7"
+        >
+          {isLoading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text className="text-white font-bold text-lg">Verify Now</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Resend */}
+        <View className="items-center mt-7">
+          <Text className="text-gray-400">Didn’t receive the code?</Text>
+
+          <TouchableOpacity
+            onPress={() => signUp.verifications.sendEmailCode()}
+            className="mt-2"
+          >
+            <Text className="text-[#7FA339] font-semibold">Resend Code</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Start over */}
+        <TouchableOpacity
+          onPress={() => {
+            signUp.reset();
+            router.replace("/(auth)/sign-up");
+          }}
+          className="items-center mt-5"
+        >
+          <Text className="text-gray-400">Start over</Text>
+        </TouchableOpacity>
+
+        <View nativeID="clerk-captcha" />
+      </View>
+    </ScrollView>
+  );
+}

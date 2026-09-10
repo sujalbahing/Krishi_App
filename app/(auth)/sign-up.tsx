@@ -1,4 +1,5 @@
 import { useAuth, useSignUp } from "@clerk/expo";
+import { Ionicons } from "@expo/vector-icons";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -25,7 +26,7 @@ export default function SignUp() {
     const nameParts = fullName.trim().split(/\s+/);
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(" ");
-    
+
     const { error } = await signUp.password({
       emailAddress: email,
       password,
@@ -37,6 +38,7 @@ export default function SignUp() {
       alert(error.message);
       return;
     }
+
     if (!error) await signUp.verifications.sendEmailCode();
   };
 
@@ -52,6 +54,7 @@ export default function SignUp() {
             console.log(session?.currentTask);
             return;
           }
+
           const url = decorateUrl("/");
           router.replace(url as any);
         },
@@ -67,149 +70,296 @@ export default function SignUp() {
     return null;
   }
 
+  // ============================================================
+  // OTP VERIFICATION SCREEN
+  // ============================================================
 
-  // OTP verification screen
   if (
     signUp.status === "missing_requirements" &&
     signUp.unverifiedFields.includes("email_address") &&
     signUp.missingFields.length === 0
   ) {
     return (
-      <View className="flex-1 justify-center items-center bg-white px-6">
-        <Image
-          source={require("../../assets/images/krishi.png")}
-          className="w-32 h-16 mb-8"
-          resizeMode="contain"
-        />
-        <Text className="text-2xl font-bold text-gray-800 mb-2">
-          Verify your account
-        </Text>
-        <Text className="text-gray-500 mb-8 text-center">
-          We have sent a code to {email}
-        </Text>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        className="bg-white"
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="flex-1 justify-center px-6 py-12">
+          {/* Logo */}
+          <View className="items-center mb-8">
+            <Image
+              source={require("../../assets/images/krishi.png")}
+              className="w-44 h-28"
+              resizeMode="contain"
+            />
+          </View>
 
-        <TextInput
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4"
-          placeholder="Enter verification code"
-          placeholderTextColor="#9CA3AF"
-          keyboardType="number-pad"
-          value={code}
-          onChangeText={setCode}
-        />
-        {errors.fields.code && (
-          <Text className="text-red-500 mb-4">
-            {errors.fields.code.message}
+          {/* Heading */}
+          <Text className="text-3xl font-bold text-gray-900 text-center mb-2">
+            Verify Your Account
           </Text>
-        )}
 
-        <TouchableOpacity
-          onPress={onVerifyPress}
-          disabled={isLoading}
-          className="w-full bg-blue-600 py-4 rounded-xl items-center mb-4"
-        >
-          {isLoading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text className="text-white font-bold text-base">Verify Now</Text>
+          <Text className="text-base text-gray-400 text-center mb-10">
+            We have sent a verification code to
+          </Text>
+
+          <Text className="text-base font-semibold text-gray-700 text-center mb-8">
+            {email}
+          </Text>
+
+          {/* OTP Label */}
+          <Text className="text-xl font-bold text-gray-900 mb-3">
+            Verification Code
+          </Text>
+
+          {/* OTP Input */}
+          <TextInput
+            className="w-full border border-gray-200 rounded-full px-6 py-4 text-base mb-2"
+            placeholder="Enter verification code"
+            placeholderTextColor="#B0B0B0"
+            keyboardType="number-pad"
+            value={code}
+            onChangeText={setCode}
+            maxLength={6}
+          />
+
+          {errors.fields.code && (
+            <Text className="text-red-500 text-sm mb-4">
+              {errors.fields.code.message}
+            </Text>
           )}
-        </TouchableOpacity>
 
-        <Text>
-          Didn’t you receive any code? 
-        </Text>
+          {/* Verify Button */}
+          <TouchableOpacity
+            onPress={onVerifyPress}
+            disabled={isLoading}
+            className="w-full bg-[#7FA339] py-4 rounded-full items-center mt-5 mb-6"
+          >
+            {isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-white font-bold text-base">Verify Now</Text>
+            )}
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => signUp.verifications.sendEmailCode()}
-          className="py-2"
-        >
-          <Text className="text-blue-600">Resend Code</Text>
-        </TouchableOpacity>
+          {/* Resend */}
+          <View className="items-center">
+            <Text className="text-gray-400 text-sm mb-1">
+              
+            </Text>
 
-        <TouchableOpacity onPress={() => signUp.reset()} className="py-2">
-          <Text className="text-blue-600">Start over</Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity
+              onPress={() => signUp.verifications.sendEmailCode()}
+              className="py-2"
+            >
+              <Text className="text-[#7FA339] font-semibold">Resend Code</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Start Over */}
+          <TouchableOpacity
+            onPress={() => signUp.reset()}
+            className="items-center mt-4"
+          >
+            <Text className="text-gray-400 text-sm">Start over</Text>
+          </TouchableOpacity>
+
+          <View nativeID="clerk-captcha" />
+        </View>
+      </ScrollView>
     );
   }
 
-  // Sign Up Form
+  // ============================================================
+  // SIGN UP SCREEN
+  // ============================================================
+
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       className="bg-white"
       keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
     >
-      <View className="flex-1 justify-center px-6 py-12">
-        <Image
-          source={require("../../assets/images/krishi.png")}
-          className="w-32 h-16
-        mb-8"
-          resizeMode="contain"
-        />
-        <Text className="text-3xl font-bold text-gray-800 mb-2">
-          Registration
-        </Text>
-        <Text className="text font-bold text-gray-400 mb-2">
-          Enter the fields below to get started.
-        </Text>
-        <Text className="text-2xl font-bold text-gray-800 mb-2">Name</Text>
-        <View className="flex-row gap-3 mb-4">
-          <TextInput
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-3"
-            placeholder="Enter Your Name"
-            placeholderTextColor="#9CA3AF"
-            value={fullName}
-            onChangeText={setFullName}
-            autoCapitalize="words"
+      <View className="flex-1 px-6 pt-16 pb-8">
+        {/* ======================================================
+            LOGO
+        ====================================================== */}
+
+        <View className="items-center mb-5">
+          <Image
+            source={require("../../assets/images/krishi.png")}
+            className="w-44 h-28"
+            resizeMode="contain"
           />
         </View>
-        <Text className="text-2xl font-bold text-gray-800 mb-2">Email</Text>
+
+        {/* ======================================================
+            TITLE
+        ====================================================== */}
+
+        <Text className="text-3xl font-bold text-gray-900 text-center mb-1">
+          Registration
+        </Text>
+
+        <Text className="text-base text-gray-400 text-center mb-9">
+          Enter the fields below to get started.
+        </Text>
+
+        {/* ======================================================
+            NAME
+        ====================================================== */}
+
+        <Text className="text-xl font-bold text-gray-900 mb-2 ml-1">Name</Text>
+
         <TextInput
-          className="w-full border border-gray-300 rounded-xl px-4 py-3"
-          placeholder="Enter Your Email"
-          placeholderTextColor="#9CA3AF"
+          className="w-full h-16 border border-gray-200 rounded-full px-7 text-base text-gray-800 mb-4"
+          placeholder="Enter your Name"
+          placeholderTextColor="#B0B0B0"
+          value={fullName}
+          onChangeText={setFullName}
+          autoCapitalize="words"
+        />
+
+        {/* ======================================================
+            EMAIL
+        ====================================================== */}
+
+        <Text className="text-xl font-bold text-gray-900 mb-2 ml-1">Email</Text>
+
+        <TextInput
+          className="w-full h-16 border border-gray-200 rounded-full px-7 text-base text-gray-800"
+          placeholder="Enter your Email"
+          placeholderTextColor="#B0B0B0"
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
         />
+
         {errors.fields.emailAddress && (
-          <Text className="text-red-500 mb-4">
+          <Text className="text-red-500 text-sm mt-1 ml-2">
             {errors.fields.emailAddress.message}
           </Text>
         )}
-        <Text className="text-2xl font-bold text-gray-800 mb-2">Password</Text>
+
+        {/* ======================================================
+            PASSWORD
+        ====================================================== */}
+
+        <Text className="text-xl font-bold text-gray-900 mt-4 mb-2 ml-1">
+          Password
+        </Text>
+
         <TextInput
-          className="w-full border border-gray-300 rounded-xl px-4 py-3"
-          placeholder="Enter Your Password"
-          placeholderTextColor="#9CA3AF"
+          className="w-full h-16 border border-gray-200 rounded-full px-7 text-base text-gray-800"
+          placeholder="Enter your Password"
+          placeholderTextColor="#B0B0B0"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
+
         {errors.fields.password && (
-          <Text className="text-red-500 mb-4">
+          <Text className="text-red-500 text-sm mt-1 ml-2">
             {errors.fields.password.message}
           </Text>
         )}
+
+        {/* ======================================================
+            REMEMBER ME
+        ====================================================== */}
+
+        {/* <View className="flex-row items-center mt-4 ml-2">
+          <View className="w-5 h-5 border border-gray-400 rounded-md items-center justify-center">
+            <Ionicons name="checkmark" size={15} color="#777777" />
+          </View>
+
+          <Text className="text-gray-400 text-sm ml-2">Remember me</Text>
+        </View> */}
+
+        {/* ======================================================
+            SIGN UP BUTTON
+        ====================================================== */}
+
         <TouchableOpacity
           onPress={onSignUpPress}
           disabled={isLoading}
-          className="w-full bg-blue-600 mt-5 py-4 rounded-xl items-center mb-4"
+          className="w-full bg-[#7FA339] h-16 rounded-full items-center justify-center mt-7 mb-7"
         >
           {isLoading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text className="text-white font-bold text-base">Sign Up</Text>
+            <Text className="text-white font-bold text-lg">Sign Up</Text>
           )}
         </TouchableOpacity>
 
-        <View className="flex-row justify-center">
-          <Text className="text-gray-500">Already have an account? </Text>
-          <Link href="/sign-in">
-            <Text className="text-blue-600 font-semibold">LogIn</Text>
+        {/* ======================================================
+            SOCIAL DIVIDER
+        ====================================================== */}
+
+        <View className="flex-row items-center mb-7">
+          <View className="flex-1 h-px bg-gray-300" />
+
+          <Text className="text-gray-400 text-sm mx-3">Or Continue with</Text>
+
+          <View className="flex-1 h-px bg-gray-300" />
+        </View>
+
+        {/* ======================================================
+            SOCIAL ICONS
+        ====================================================== */}
+
+        <View className="flex-row justify-center items-center mb-8">
+          {/* Google */}
+          <TouchableOpacity
+            className="mx-5 items-center justify-center"
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="logo-google"
+              size={35}
+              color="#4285F4"
+            />
+          </TouchableOpacity>
+
+          {/* Apple */}
+          <TouchableOpacity
+            className="mx-5 items-center justify-center"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="logo-apple" size={35} color="#000000" />
+          </TouchableOpacity>
+
+          {/* Facebook */}
+          <TouchableOpacity
+            className="mx-5 items-center justify-center"
+            activeOpacity={0.7}
+          >
+            <Ionicons name="logo-facebook" size={37} color="#1877F2" />
+          </TouchableOpacity>
+        </View>
+
+        {/* ======================================================
+            LOGIN
+        ====================================================== */}
+
+        <View className="flex-row justify-center items-center">
+          <Text className="text-gray-400 text-base">
+            Already have an account ?
+          </Text>
+
+          <Link href="/sign-in" asChild>
+            <TouchableOpacity>
+              <Text className="text-[#7FA339] font-semibold text-base ml-1">
+                Login
+              </Text>
+            </TouchableOpacity>
           </Link>
         </View>
+
+        {/* Clerk CAPTCHA */}
         <View nativeID="clerk-captcha" />
       </View>
     </ScrollView>
