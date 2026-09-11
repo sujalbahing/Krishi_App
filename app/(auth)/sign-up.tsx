@@ -25,23 +25,32 @@ export default function SignUp() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const onSignUpPress = async () => {
-    const nameParts = fullName.trim().split(/\s+/);
+    if (!fullName.trim()) {
+      alert("Please enter your name.");
+      return;
+    }
+    if (!email.trim()) {
+      alert("Please enter your email.");
+      return;
+    }
+    if (!password) {
+      alert("Please enter your password.");
+      return;
+    }
 
+    const nameParts = fullName.trim().split(/\s+/);
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(" ");
-
     const { error } = await signUp.password({
-      emailAddress: email,
+      emailAddress: email.trim(),
       password,
       firstName,
       lastName,
     });
-
     if (error) {
       alert(error.message);
       return;
     }
-
     const { error: verificationError } =
       await signUp.verifications.sendEmailCode();
 
@@ -49,11 +58,10 @@ export default function SignUp() {
       alert(verificationError.message);
       return;
     }
-
     router.push({
       pathname: "/(auth)/verify-email",
       params: {
-        email,
+        email: email.trim(),
         type: "signup",
       },
     });
