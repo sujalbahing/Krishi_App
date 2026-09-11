@@ -50,7 +50,13 @@ export default function SignUp() {
       return;
     }
 
-    router.push(`/(auth)/verify-email?email=${encodeURIComponent(email)}`);
+    router.push({
+      pathname: "/(auth)/verify-email",
+      params: {
+        email,
+        type: "signup",
+      },
+    });
   };
 
   const isLoading = fetchStatus === "fetching";

@@ -1,4 +1,4 @@
-import { useSignUp } from "@clerk/expo";
+import { useSignIn, useSignUp } from "@clerk/expo";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -12,34 +12,77 @@ import {
 } from "react-native";
 
 export default function VerifyEmail() {
-  const { signUp, errors, fetchStatus } = useSignUp();
+  const {
+    signUp,
+    errors: signUpErrors,
+    fetchStatus: signUpFetchStatus,
+  } = useSignUp();
+
+  const {
+    signIn,
+    errors: signInErrors,
+    fetchStatus: signInFetchStatus,
+  } = useSignIn();
+
+  const { email, type } = useLocalSearchParams<{
+    email: string;
+    type: "signup" | "signin";
+  }>();
+  
   const router = useRouter();
-  const { email } = useLocalSearchParams<{ email: string }>();
   const [code, setCode] = useState("");
 
-  const isLoading = fetchStatus === "fetching";
-  const onVerifyPress = async () => {
-    const { error } = await signUp.verifications.verifyEmailCode({
-      code,
-    });
+  const isLoading =
+    type === "signup"
+      ? signUpFetchStatus === "fetching"
+      : signInFetchStatus === "fetching";
 
-    if (error) {
-      alert(error.message);
-      return;
+  const codeError =
+    type === "signup" ? signUpErrors.fields.code : signInErrors.fields.code;
+
+  const onVerifyPress = async () => {
+    if (type === "signup") {
+      const { error } = await signUp.verifications.verifyEmailCode({
+        code,
+      });
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      if (signUp.status === "complete") {
+        await signUp.finalize({
+          navigate: ({ session, decorateUrl }) => {
+            if (session?.currentTask) {
+              console.log(session.currentTask);
+              return;
+            }
+            const url = decorateUrl("/");
+            router.replace(url as any);
+          },
+        });
+      }
     }
 
-    if (signUp.status === "complete") {
-      await signUp.finalize({
-        navigate: ({ session, decorateUrl }) => {
-          if (session?.currentTask) {
-            console.log(session.currentTask);
-            return;
-          }
-
-          const url = decorateUrl("/");
-          router.replace(url as any);
-        },
+    if (type === "signin") {
+      const { error } = await signIn.mfa.verifyEmailCode({
+        code,
       });
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      if (signIn.status === "complete") {
+        await signIn.finalize({
+          navigate: ({ session, decorateUrl }) => {
+            if (session?.currentTask) {
+              console.log(session.currentTask);
+              return;
+            }
+            const url = decorateUrl("/");
+            router.replace(url as any);
+          },
+        });
+      }
     }
   };
 
@@ -89,10 +132,8 @@ export default function VerifyEmail() {
           maxLength={6}
         />
 
-        {errors.fields.code && (
-          <Text className="text-red-500 text-sm mt-2">
-            {errors.fields.code.message}
-          </Text>
+        {codeError && (
+          <Text className="text-red-500 text-sm mt-2">{codeError.message}</Text>
         )}
 
         {/* Verify */}
@@ -113,7 +154,21 @@ export default function VerifyEmail() {
           <Text className="text-gray-400">Didn’t you receive any code?</Text>
 
           <TouchableOpacity
-            onPress={() => signUp.verifications.sendEmailCode()}
+            onPress={async () => {
+              if (type === "signup") {
+                const { error } = await signUp.verifications.sendEmailCode();
+
+                if (error) {
+                  alert(error.message);
+                }
+              } else {
+                const { error } = await signIn.mfa.sendEmailCode();
+
+                if (error) {
+                  alert(error.message);
+                }
+              }
+            }}
           >
             <Text className="text-[#7FA339] font-semibold ml-1">
               Resend Code
@@ -124,8 +179,13 @@ export default function VerifyEmail() {
         {/* Start over */}
         <TouchableOpacity
           onPress={() => {
-            signUp.reset();
-            router.replace("/(auth)/sign-up");
+            if (type === "signup") {
+              signUp.reset();
+              router.replace("/(auth)/sign-up");
+            } else {
+              signIn.reset();
+              router.replace("/(auth)/sign-in");
+            }
           }}
           className="items-center mt-5"
         >
