@@ -91,7 +91,7 @@ export default function SignIn() {
             />
           </View>
 
-          <Text className="text-3xl font-bold text-gray-900 text-center mb-1">
+          <Text className="text-2xl font-bold text-gray-900 text-center mb-1">
             Welcome to Krishi Mitra
           </Text>
           <Text className="text-base text-gray-400 text-center mb-9">
@@ -139,6 +139,16 @@ export default function SignIn() {
               onChangeText={setPassword}
               secureTextEntry={!passwordVisible}
             />
+
+            <View className="flex-row justify-end items-center mt-2 pr-1">
+              <Link href="/forget-password" asChild>
+                <TouchableOpacity>
+                  <Text className="text-[#7FA339] font-semibold text-base ml-1">
+                    Forget Password?
+                  </Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
 
             <TouchableOpacity
               onPress={() => setPasswordVisible(!passwordVisible)}
@@ -208,9 +218,10 @@ export default function SignIn() {
             <Text className="text-gray-400 text-base">
               Don&apos;t have an account
             </Text>
+
             <Link href="/sign-up" asChild>
               <TouchableOpacity>
-                <Text className="text-[#7FA339] font-semibold text-base ml-1">
+                <Text className="text-[#7FA339] font-semibold text-base ml-1 underline">
                   Sign Up
                 </Text>
               </TouchableOpacity>

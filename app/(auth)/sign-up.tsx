@@ -74,7 +74,6 @@ export default function SignUp() {
   }
 
   //Sign Up Screen
-
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white"
@@ -88,7 +87,7 @@ export default function SignUp() {
       >
         <View className="flex-1 px-6 pt-20 pb-8">
           {/* Logo */}
-          <View className="items-center mb-5">
+          <View className="items-center mb-2">
             <Image
               source={require("../../assets/images/krishi.png")}
               className="w-56 h-36"
@@ -96,14 +95,14 @@ export default function SignUp() {
             />
           </View>
 
-          <Text className="text-3xl font-bold text-gray-900 text-center mb-1">
+          <Text className="text-2xl font-bold text-gray-900 text-center mb-1">
             Registration
           </Text>
-          <Text className="text-base text-gray-400 text-center mb-9">
+          <Text className="text-base text-gray-400 text-center mb-5">
             Enter the fields below to get started.
           </Text>
 
-          <Text className="text-xl font-bold text-gray-900 mb-2 ml-1">
+          <Text className="text-xl font-bold text-gray-900 mb-1 ml-1">
             Name
           </Text>
           <TextInput
@@ -120,7 +119,7 @@ export default function SignUp() {
             autoCapitalize="words"
           />
 
-          <Text className="text-xl font-bold text-gray-900 mb-2 ml-1">
+          <Text className="text-xl font-bold text-gray-900 mb-1 ml-1">
             Email
           </Text>
           <TextInput
@@ -144,7 +143,7 @@ export default function SignUp() {
             </Text>
           )}
 
-          <Text className="text-xl font-bold text-gray-900 mt-4 mb-2 ml-1">
+          <Text className="text-xl font-bold text-gray-900 mt-4 mb-1 ml-1">
             Password
           </Text>
           <View className="relative">
@@ -199,7 +198,6 @@ export default function SignUp() {
           </View>
 
           {/* Social Icons */}
-
           <View className="flex-row justify-center items-center mb-8">
             {/* Google */}
             <TouchableOpacity
@@ -232,8 +230,8 @@ export default function SignUp() {
             </Text>
             <Link href="/sign-in" asChild>
               <TouchableOpacity>
-                <Text className="text-[#7FA339] font-semibold text-base ml-1">
-                  Login
+                <Text className="text-[#7FA339] font-semibold text-base ml-1 underline">
+                  Log In
                 </Text>
               </TouchableOpacity>
             </Link>
