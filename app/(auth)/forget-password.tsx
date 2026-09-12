@@ -15,10 +15,12 @@ import {
 import { useResetPasswordStore } from "../../store/reset-password-store";
 
 export default function ForgetPassword() {
-  const { signIn, errors, fetchStatus } = useSignIn();
+  const { signIn, fetchStatus } = useSignIn();
   const router = useRouter();
 
   const [email, setEmailInput] = useState("");
+  const [emailError, setEmailError] = useState("");
+
   const setEmail = useResetPasswordStore((state) => state.setEmail);
 
   const onForgetPasswordPress = async () => {
@@ -32,7 +34,7 @@ export default function ForgetPassword() {
     });
 
     if (error) {
-      alert(error.message);
+      setEmailError(error.message);
       return;
     }
 
@@ -95,16 +97,17 @@ export default function ForgetPassword() {
             }}
             placeholderTextColor="#B0B0B0"
             value={email}
-            onChangeText={setEmailInput}
+            onChangeText={(text) => {
+              setEmailInput(text);
+              setEmailError("");
+            }}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
           />
 
-          {errors.fields.identifier && (
-            <Text className="text-red-500 text-sm mt-1 ml-2">
-              {errors.fields.identifier.message}
-            </Text>
+          {emailError && (
+            <Text className="text-red-500 text-sm mt-1 ml-2">{emailError}</Text>
           )}
 
           {/* Send Code */}
