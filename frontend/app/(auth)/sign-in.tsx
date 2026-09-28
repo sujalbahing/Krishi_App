@@ -140,6 +140,12 @@ export default function SignIn() {
               secureTextEntry={!passwordVisible}
             />
 
+            {errors.fields.password && (
+              <Text className="text-red-500 text-sm mt-1 ml-2">
+                {errors.fields.password.message}
+              </Text>
+            )}
+
             <View className="flex-row justify-end items-center mt-2 pr-1">
               <Link href="/forget-password" asChild>
                 <TouchableOpacity>
@@ -161,12 +167,6 @@ export default function SignIn() {
               />
             </TouchableOpacity>
           </View>
-
-          {errors.fields.password && (
-            <Text className="text-red-500 text-sm mt-1 ml-2">
-              {errors.fields.password.message}
-            </Text>
-          )}
 
           <TouchableOpacity
             onPress={onSignInPress}
