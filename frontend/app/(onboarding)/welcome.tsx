@@ -46,14 +46,7 @@ export default function Onboarding() {
   const handleSignUp = () => {
     router.replace("/(auth)/sign-up");
   };
-
-  /*
-   * Calculate a responsive illustration height.
-   *
-   * The bottom controls and header need their own space,
-   * so we don't allow the illustration to consume too much
-   * of the screen.
-   */
+  
   const illustrationHeight = Math.min(
     Math.max(height * 0.32, 200),
     320,
