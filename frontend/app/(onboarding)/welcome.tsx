@@ -13,24 +13,28 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { slides } from "../../data/slides";
+import { useFonts } from "expo-font";
 
 export default function Onboarding() {
   const router = useRouter();
-
   const { width, height } = useWindowDimensions();
-
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handleScroll = (
-    event: NativeSyntheticEvent<NativeScrollEvent>,
-  ) => {
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-
     const index = Math.round(offsetX / width);
-
     setCurrentIndex(index);
   };
+
+  const [fontsLoaded] = useFonts({
+    // K2D: require("../../assets/fonts/K2D-Regular.ttf"),
+    K2DBold: require("../../assets/fonts/K2D-Bold.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const handleContinue = () => {
     if (currentIndex < slides.length - 1) {
@@ -46,11 +50,8 @@ export default function Onboarding() {
   const handleSignUp = () => {
     router.replace("/(auth)/sign-up");
   };
-  
-  const illustrationHeight = Math.min(
-    Math.max(height * 0.32, 200),
-    320,
-  );
+
+  const illustrationHeight = Math.min(Math.max(height * 0.32, 200), 320);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -67,7 +68,15 @@ export default function Onboarding() {
           />
 
           {/* Logo Text */}
-          <Text className="ml-3 text-[34px] font-bold tracking-wide text-[#4F873F]">
+          <Text
+            style={{
+              fontFamily: "K2DBold",
+              fontSize: 34,
+              letterSpacing: 1,
+              color: "#4F873F",
+              marginLeft: 12,
+            }}
+          >
             KRISHI MITRA
           </Text>
         </View>
@@ -91,10 +100,7 @@ export default function Onboarding() {
           index,
         })}
         renderItem={({ item }) => (
-          <View
-            style={{ width }}
-            className="flex-1 items-center px-5"
-          >
+          <View style={{ width }} className="flex-1 items-center px-5">
             {/* Illustration */}
             <View
               className="w-full items-center justify-center"
@@ -133,16 +139,14 @@ export default function Onboarding() {
       />
 
       {/* Bottom Controls */}
-      <View className="px-7 pb-2">
+      <View className="px-7 pb-9">
         {/* Pagination */}
-        <View className="mb-6 flex-row items-center justify-center gap-3">
+        <View className="mb-9 flex-row items-center justify-center gap-3">
           {slides.map((_, index) => (
             <View
               key={index}
               className={`h-3 w-3 rounded-full ${
-                currentIndex === index
-                  ? "bg-[#7FA339]"
-                  : "bg-[#D9D9D9]"
+                currentIndex === index ? "bg-[#7FA339]" : "bg-[#D9D9D9]"
               }`}
             />
           ))}
@@ -154,9 +158,7 @@ export default function Onboarding() {
           className="h-[62px] items-center justify-center rounded-[43px] bg-[#7FA339]"
         >
           <Text className="text-[18px] font-bold text-white">
-            {currentIndex === slides.length - 1
-              ? "Get Started"
-              : "Continue"}
+            {currentIndex === slides.length - 1 ? "Get Started" : "Continue"}
           </Text>
         </Pressable>
 

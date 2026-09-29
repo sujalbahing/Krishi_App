@@ -94,16 +94,40 @@ export default function VerifyEmail() {
     >
       <View className="flex-1 px-6 pt-20 pb-8">
         {/* Logo */}
-        <View className="items-center mb-8">
+        {/* <View className="items-center mb-8">
           <Image
             source={require("../../assets/images/krishi.png")}
             className="w-56 h-36"
             resizeMode="contain"
           />
-        </View>
+        </View> */}
+
+        <View className="items-center pt-5">
+            <View className="flex-row items-center">
+              {/* Logo Icon */}
+              <Image
+                source={require("../../assets/images/krishi.png")}
+                className="h-20 w-20"
+                resizeMode="contain"
+              />
+
+              {/* Logo Text */}
+              <Text
+                style={{
+                  fontFamily: "K2DBold",
+                  fontSize: 34,
+                  letterSpacing: 1,
+                  color: "#4F873F",
+                  marginLeft: 12,
+                }}
+              >
+                KRISHI MITRA
+              </Text>
+            </View>
+          </View>
 
         {/* Title */}
-        <Text className="text-3xl font-bold text-gray-900 text-center mb-2">
+        <Text className="text-3xl font-bold text-gray-900 text-center mb-2 mt-8">
           Verify Your Email
         </Text>
 
