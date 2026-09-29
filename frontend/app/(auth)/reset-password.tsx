@@ -97,16 +97,14 @@ export default function ResetPassword() {
             />
           </View> */}
 
-          <View className="items-center pt-5">
-            <View className="flex-row items-center">
-              {/* Logo Icon */}
+          <View className="items-center pt-5 px-6 pl-6">
+            <View className="flex-row items-center w-full">
               <Image
                 source={require("../../assets/images/krishi.png")}
                 className="h-20 w-20"
                 resizeMode="contain"
               />
 
-              {/* Logo Text */}
               <Text
                 style={{
                   fontFamily: "K2DBold",
@@ -114,7 +112,11 @@ export default function ResetPassword() {
                   letterSpacing: 1,
                   color: "#4F873F",
                   marginLeft: 12,
+                  flexShrink: 1,
                 }}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
               >
                 KRISHI MITRA
               </Text>
@@ -122,7 +124,7 @@ export default function ResetPassword() {
           </View>
 
           {/* Title */}
-          <Text className="text-3xl font-bold text-gray-900 text-center mb-2 mt-8">
+          <Text className="text-3xl font-bold text-gray-900 text-center mb-2 mt-5">
             Reset Your Password
           </Text>
 
