@@ -13,16 +13,15 @@ export default function TabsLayout() {
         <NativeTabs.Trigger.Label>Market</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
+      <NativeTabs.Trigger name="shop">
+        <NativeTabs.Trigger.Label>Shop</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf="bag.fill" md="shopping_bag" />
+      </NativeTabs.Trigger>
+
       <NativeTabs.Trigger name="profile">
         <NativeTabs.Trigger.Icon sf="person.fill" md="person" />
         <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="settings">
-        <NativeTabs.Trigger.Icon sf="gear" md="settings" />
-        <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-      
     </NativeTabs>
   );
 }
